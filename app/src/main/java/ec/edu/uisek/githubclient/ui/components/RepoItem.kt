@@ -20,61 +20,64 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import ec.edu.uisek.githubclient.ui.screens.RepoList
+
+import ec.edu.uisek.githubclient.models.GithubUser
+import ec.edu.uisek.githubclient.models.Repository
 import ec.edu.uisek.githubclient.ui.theme.GithubClientTheme
 
-
 @Composable
-fun RepoItem (
-    repoImage: String,
-    repoName: String,
-    repoDescription:String?,
-    repoLanguage:String?,
-){
+fun RepoItem(
+    repository: Repository
+) {
     Card(
         modifier = Modifier.padding(8.dp).fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation=4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
             modifier = Modifier.padding(16.dp).fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
-        ) { AsyncImage(
-            model = repoImage,
-            contentDescription = "Avatar del propietario",
-            modifier=Modifier.size(60.dp),
-            contentScale= ContentScale.Crop
+        ) {
+            AsyncImage(
+                model = repository.owner.avatarUrl,
+                contentDescription = "Avatar de ${repository.owner.login}",
+                modifier = Modifier.size(60.dp),
+                contentScale = ContentScale.Crop
             )
-            Spacer(modifier= Modifier.width(16.dp))
-            Column(modifier= Modifier.weight(1f)) {
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = repoName,
+                    text = repository.name,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                if(!repoDescription.isNullOrBlank()){
+                if (!repository.description.isNullOrBlank()) {
                     Text(
-                        text=repoDescription,
-                        style=MaterialTheme.typography.bodyMedium,
-                        maxLines=3
+                        text = repository.description,
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 3
                     )
                 }
                 Spacer(modifier = Modifier.height(4.dp))
-                if(!repoLanguage.isNullOrBlank()){
+                if (!repository.language.isNullOrBlank()) {
                     Text(
-                        text=repoLanguage,
-                        style=MaterialTheme.typography.labelSmall,
-                        maxLines=3
+                        text = repository.language,
+                        style = MaterialTheme.typography.labelSmall,
+                        maxLines = 1
                     )
                 }
             }
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
-fun RepoItemPreview () {
+fun RepoItemPreview() {
     GithubClientTheme {
-        RepoList()
+        val dummyUser = GithubUser(id = "1", login = "Andres", avatarUrl = "https://avatars.githubusercontent.com/u/1?v=4")
+        val dummyRepo = Repository(id = "1", name = "MiProyectoApp", owner = dummyUser, description = "Proyecto de laboratorio UISEK", language = "Kotlin")
+
+        RepoItem(repository = dummyRepo)
     }
 }
